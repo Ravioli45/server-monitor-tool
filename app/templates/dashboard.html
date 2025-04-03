@@ -5,6 +5,8 @@
 
         <h1>This is the dashboard</h1>
 
+        <p>Hello {{ current_user.username }}</p>
+
         <ul>
 
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
