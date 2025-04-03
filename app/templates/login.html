@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <body>
+
+        <h1>Log in!</h1>
+
+        {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+        <ul>
+
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <form method="post">
+
+            {{ form.hidden_tag() }}
+
+            <p>
+                {{ form.username.label }} <br>
+                {{ form.username }}<br>
+
+                {% for error in form.username.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+
+            </p>
+
+            <p>
+                {{ form.password.label }} <br>
+                {{ form.password }}<br>
+
+                {% for error in form.password.errors %}
+                    <span style="color: red;">[ {{ error }} ]</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.submit }} </p>
+        </form>
+
+    </body>
+
+</html>
