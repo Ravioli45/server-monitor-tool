@@ -1,22 +1,24 @@
-from flask import Flask, request, session, render_template, redirect, url_for, flash
+from flask import Flask, request, session, render_template, redirect, url_for, flash, Blueprint
 from flask_login import current_user, logout_user, login_required, login_user
-from app import app, db
+from app import db
 from app.models import *
 from app.forms import LoginForm, RegistrationForm
 
-@app.route("/")
+bp = Blueprint("main", __name__)
+
+@bp.route("/")
 def index():
     #session.permanent = True
     #session['test'] = 52
 
     return render_template("index.html")
 
-@app.route("/login", methods=['GET', 'POST'])
+@bp.route("/login", methods=['GET', 'POST'])
 def login():
     session.permanent = True
 
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('main.dashboard'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -24,25 +26,25 @@ def login():
         user = db.session.scalar(sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
             flash("Invalid username or password")
-            return redirect(url_for("login"))
+            return redirect(url_for("main.login"))
         
         login_user(user)
     
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("main.dashboard"))
     
 
     return render_template("login.html", form=form)
 
-@app.route("/logout")
+@bp.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("main.index"))
 
-@app.route("/register", methods=["GET", "POST"])
+@bp.route("/register", methods=["GET", "POST"])
 def register():
 
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("main.dashboard"))
     
     form = RegistrationForm()
 
@@ -55,11 +57,11 @@ def register():
 
         flash("You can now log in")
 
-        return redirect(url_for("login"))
+        return redirect(url_for("main.login"))
 
     return render_template("register.html", form=form)
 
-@app.route("/dashboard")
+@bp.route("/dashboard")
 @login_required
 def dashboard():
     
