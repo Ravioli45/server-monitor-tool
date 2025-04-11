@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import List
+
 from flask_login import UserMixin
 
 import sqlalchemy as sa
@@ -21,6 +24,11 @@ class User(UserMixin, db.Model):
 
     password_hash: so.Mapped[str] = so.mapped_column(sa.String(256))
 
+    monitors: so.WriteOnlyMapped[List['Monitor']] = so.relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
     def set_password(self, password):
         self.password_hash = ph.hash(password)
 
@@ -32,3 +40,16 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"<User {self.id}:{self.username}>"
+
+class Monitor(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    url: so.Mapped[str] = so.mapped_column(sa.String(512))
+
+    time_next_ping: so.Mapped[datetime] = so.mapped_column(index=True)
+    seconds_to_next_ping: so.Mapped[int] = so.mapped_column()
+
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+    user: so.Mapped['User'] = so.relationship(back_populates="monitors")
+
+    def __repr__(self):
+        return f"<Monitor {self.id}:{self.url}>"
