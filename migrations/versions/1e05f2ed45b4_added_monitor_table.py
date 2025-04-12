@@ -24,7 +24,7 @@ def upgrade():
     sa.Column('time_next_ping', sa.DateTime(), nullable=False),
     sa.Column('seconds_to_next_ping', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete="CASCADE"),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('monitor', schema=None) as batch_op:

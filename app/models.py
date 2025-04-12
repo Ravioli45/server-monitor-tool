@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 from flask_login import UserMixin
@@ -26,7 +26,8 @@ class User(UserMixin, db.Model):
 
     monitors: so.WriteOnlyMapped[List['Monitor']] = so.relationship(
         back_populates="user",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        passive_deletes=True
     )
 
     def set_password(self, password):
@@ -48,8 +49,28 @@ class Monitor(db.Model):
     time_next_ping: so.Mapped[datetime] = so.mapped_column(index=True)
     seconds_to_next_ping: so.Mapped[int] = so.mapped_column()
 
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id, ondelete="CASCADE"), index=True)
     user: so.Mapped['User'] = so.relationship(back_populates="monitors")
+
+    status_checks: so.WriteOnlyMapped[List['Status']] = so.relationship(
+        back_populates="monitor",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
     def __repr__(self):
         return f"<Monitor {self.id}:{self.url}>"
+
+class Status(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+
+    timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
+
+    response: so.Mapped[str] = so.mapped_column(sa.String(64))
+    ssl_expired: so.Mapped[bool] = so.mapped_column()
+
+    monitor_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Monitor.id, ondelete="CASCADE"), index=True)
+    monitor: so.Mapped['Monitor'] = so.relationship(back_populates="status_checks")
+
+    def __repr__(self):
+        return f"<Status {self.id}:{self.response}>"
