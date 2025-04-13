@@ -19,9 +19,6 @@ def after_request(response):
 
 @bp.route("/")
 def index():
-    #session.permanent = True
-    #session['test'] = 52
-
     return render_template("index.html")
 
 @bp.route("/login", methods=['GET', 'POST'])
@@ -110,3 +107,16 @@ def add_monitor():
         return redirect(url_for("main.dashboard"))
 
     return render_template("add_monitor.html", form=form)
+
+@bp.route("/dashboard/remove_monitor/<monitor_id>")
+@login_required
+def remove_monitor(monitor_id):
+
+    to_delete = db.session.get(Monitor, monitor_id)
+
+    # if monitor belongs to user
+    if (to_delete is not None) and to_delete.user_id == current_user.id:
+        db.session.delete(to_delete)
+        db.session.commit()
+
+    return redirect(url_for("main.dashboard"))

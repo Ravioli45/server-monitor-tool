@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import ValidationError, EqualTo, Email, \
@@ -40,4 +42,8 @@ class AddMonitorForm(FlaskForm):
     minutes_between_pings = IntegerField("Minutes between pings", validators=[InputRequired(), NumberRange(30, 300)])
 
     submit = SubmitField("Start Monitoring")
-    
+
+    def validate_url(self, url):
+        parsed = urlparse(url.data)
+        if parsed.scheme != "https":
+            raise ValidationError("Make sure to include HTTPS at beginning of url.")
