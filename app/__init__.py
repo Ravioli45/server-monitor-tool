@@ -11,7 +11,7 @@ from sqlalchemy import event
 
 #login = LoginManager(app)
 login = LoginManager()
-login.login_view = "login"
+login.login_view = "main.login"
 ph = PasswordHasher()
 #db = SQLAlchemy(app)
 db = SQLAlchemy()

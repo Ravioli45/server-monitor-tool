@@ -9,7 +9,20 @@
 
         <ul>
 
+            <li><a href="{{ url_for('main.add_monitor') }}">Add Monitor</a></li>
             <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+
+        </ul>
+
+        <p>Monitoring...</p>
+
+        <ul>
+
+            {% for monitor in monitors %}
+
+            <li>{{ monitor.url }}</li>
+
+            {% endfor %}
 
         </ul>
 

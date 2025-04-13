@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import ValidationError, EqualTo, Email, Length, InputRequired
+from wtforms import StringField, PasswordField, SubmitField, IntegerField
+from wtforms.validators import ValidationError, EqualTo, Email, \
+    Length, InputRequired, URL, NumberRange
 
 from app import db
 import sqlalchemy as sa
@@ -33,3 +34,10 @@ class RegistrationForm(FlaskForm):
         user = db.session.scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
             raise ValidationError("Please use a different email.")
+        
+class AddMonitorForm(FlaskForm):
+    url = StringField("Monitor URL", validators=[InputRequired(), URL("Message")])
+    minutes_between_pings = IntegerField("Minutes between pings", validators=[InputRequired(), NumberRange(30, 300)])
+
+    submit = SubmitField("Start Monitoring")
+    

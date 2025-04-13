@@ -1,10 +1,21 @@
+from datetime import datetime, timedelta, timezone
+
 from flask import Flask, request, session, render_template, redirect, url_for, flash, Blueprint
 from flask_login import current_user, logout_user, login_required, login_user
 from app import db
 from app.models import *
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, AddMonitorForm
 
 bp = Blueprint("main", __name__)
+
+@bp.after_request
+def after_request(response):
+    
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+
+    return response
 
 @bp.route("/")
 def index():
@@ -37,6 +48,7 @@ def login():
 
 @bp.route("/logout")
 def logout():
+    session.clear()
     logout_user()
     return redirect(url_for("main.index"))
 
@@ -64,5 +76,37 @@ def register():
 @bp.route("/dashboard")
 @login_required
 def dashboard():
-    
-    return render_template("dashboard.html")
+
+    monitors = db.session.scalars(
+        current_user.monitors.select()
+    ).all()
+
+    return render_template("dashboard.html", monitors=monitors)
+
+@bp.route("/dashboard/add_monitor", methods=["GET", "POST"])
+@login_required
+def add_monitor():
+
+    form = AddMonitorForm()
+
+    if form.validate_on_submit():
+
+        existing_monitor = db.session.scalar(
+            sa.select(Monitor).where(sa.and_(Monitor.user_id == current_user.id, Monitor.url == form.url.data))
+        )
+
+        if existing_monitor is not None:
+            flash("Monitor already exists")
+            return redirect(url_for("main.add_monitor"))
+
+        seconds_to_next_ping = 60*form.minutes_between_pings.data
+        time_next_ping = datetime.now(timezone.utc) + timedelta(seconds=seconds_to_next_ping)
+
+        monitor = Monitor(url=form.url.data, time_next_ping=time_next_ping, seconds_to_next_ping=seconds_to_next_ping, user=current_user)
+
+        db.session.add(monitor)
+        db.session.commit()
+
+        return redirect(url_for("main.dashboard"))
+
+    return render_template("add_monitor.html", form=form)

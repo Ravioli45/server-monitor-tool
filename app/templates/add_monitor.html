@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+    <body>
+
+        <h1>Add monitor</h1>
+
+        <p>Adding monitor for {{ current_user.username }}</p>
+
+        {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+        <ul>
+
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <form method="post">
+
+            {{ form.hidden_tag() }}
+
+            <p>
+                {{ form.url.label }}<br>
+                {{ form.url(size=32) }}<br>
+                {% for error in form.url.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.minutes_between_pings.label }}<br>
+                {{ form.minutes_between_pings(size=32) }}<br>
+                {% for error in form.minutes_between_pings.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+
+            <p>{{ form.submit() }}</p>
+
+        </form>
+
+    </body>
+
+
+</html>
