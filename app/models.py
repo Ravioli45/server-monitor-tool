@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 
 from flask_login import UserMixin
 
@@ -65,9 +65,10 @@ class Status(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
 
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
+    alerted: so.Mapped[bool] = so.mapped_column(index=True, default=lambda: False)
 
     response: so.Mapped[str] = so.mapped_column(sa.String(64))
-    ssl_expired: so.Mapped[bool] = so.mapped_column()
+    ssl_expired: so.Mapped[Optional[bool]] = so.mapped_column()
 
     monitor_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Monitor.id, ondelete="CASCADE"), index=True)
     monitor: so.Mapped['Monitor'] = so.relationship(back_populates="status_checks")
