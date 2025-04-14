@@ -1,8 +1,8 @@
 """added status table
 
-Revision ID: 36e69384e4e2
+Revision ID: ae1ae3588342
 Revises: 1e05f2ed45b4
-Create Date: 2025-04-11 20:21:36.259166
+Create Date: 2025-04-13 19:07:54.917007
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '36e69384e4e2'
+revision = 'ae1ae3588342'
 down_revision = '1e05f2ed45b4'
 branch_labels = None
 depends_on = None
@@ -21,13 +21,15 @@ def upgrade():
     op.create_table('status',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=False),
+    sa.Column('alerted', sa.Boolean(), nullable=False),
     sa.Column('response', sa.String(length=64), nullable=False),
-    sa.Column('ssl_expired', sa.Boolean(), nullable=False),
+    sa.Column('ssl_expired', sa.Boolean(), nullable=True),
     sa.Column('monitor_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['monitor_id'], ['monitor.id'], ondelete="CASCADE"),
+    sa.ForeignKeyConstraint(['monitor_id'], ['monitor.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('status', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_status_alerted'), ['alerted'], unique=False)
         batch_op.create_index(batch_op.f('ix_status_monitor_id'), ['monitor_id'], unique=False)
         batch_op.create_index(batch_op.f('ix_status_timestamp'), ['timestamp'], unique=False)
 
@@ -39,6 +41,7 @@ def downgrade():
     with op.batch_alter_table('status', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_status_timestamp'))
         batch_op.drop_index(batch_op.f('ix_status_monitor_id'))
+        batch_op.drop_index(batch_op.f('ix_status_alerted'))
 
     op.drop_table('status')
     # ### end Alembic commands ###
