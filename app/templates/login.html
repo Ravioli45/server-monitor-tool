@@ -1,10 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <style>
+        li{
+            font-size: 32px;
+        }
+        .title{
+            text-align: center;
+            font-size: 72px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .msg{
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+        }
+        .textBox{
+            text-align: center;
+            background-color: lightsteelblue;
+        }
+        body{
+           background-color: lightsteelblue; 
+        }
+        p{
+            font-size: 24px;
+            
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .button{
+            background-color: #ffffff;
+            border: none;
+            color: white;
+            padding: 5px 22px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
     <body>
-
-        <h1>Log in!</h1>
-
+        
+        <h1 class = 'title'>Login</h1>
+        <div class = 'msg'>
         {% with messages = get_flashed_messages() %}
 
         {% if messages %}
@@ -17,7 +58,9 @@
         </ul>
         {% endif %}
         {% endwith %}
+    </div>
 
+    <div class = 'textBox'>
         <form method="post">
 
             {{ form.hidden_tag() }}
@@ -41,9 +84,9 @@
                 {% endfor %}
             </p>
 
-            <p> {{ form.submit }} </p>
+            <button class='button'> {{ form.submit }} </button>
         </form>
-
+    </div>
     </body>
 
 </html>
