@@ -12,9 +12,14 @@
             font-family: 'Times New Roman', Times, serif;
         }
         .msg{
-            padding: 20px;
-            text-align: center;
-            background-color: white;
+            display: table;
+            margin: auto;
+            color: rgb(235, 36, 36);
+            padding: 10px;
+            border-radius: 20px;
+            background-color: rgb(252, 200, 200);
+            border: thick solid red;
+            font-weight: bolder;
         }
         .textBox{
             text-align: center;
@@ -28,37 +33,54 @@
             
             font-family: 'Times New Roman', Times, serif;
         }
-        .button{
+        #submit{
             background-color: #ffffff;
-            border: none;
-            color: white;
+            border: solid rgb(133, 169, 215);
+            border-radius: 5px;
+            color: black;
             padding: 5px 22px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 16px;
+            font-size: 24px;
             margin: 4px 2px;
             cursor: pointer;
+            font-family: 'Times New Roman', Times, serif;
         }
+        a{
+            border: solid rgb(133, 169, 215);
+                background-color: white;
+                border-radius: 5px;
+                margin : 100px;
+                padding: 5px 18px;
+                font-size: 24px;
+                font-family: 'Times New Roman', Times, serif;
+                
+                color: black;
+                text-decoration: none;
+
+            }
     </style>
 </head>
     <body>
         
         <h1 class = 'title'>Login</h1>
-        <div class = 'msg'>
+        
         {% with messages = get_flashed_messages() %}
 
         {% if messages %}
-        <ul>
+            <div class = 'msg'>
+            
 
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
 
-        </ul>
+            </div>
+
         {% endif %}
         {% endwith %}
-    </div>
+        
 
     <div class = 'textBox'>
         <form method="post">
@@ -84,7 +106,8 @@
                 {% endfor %}
             </p>
 
-            <button class='button'> {{ form.submit }} </button>
+            {{ form.submit }}
+            <p><a href="{{ url_for('main.register') }}">Sign Up</a></p>
         </form>
     </div>
     </body>
