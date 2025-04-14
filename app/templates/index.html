@@ -1,17 +1,46 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            .myDiv{
+               
+                text-align : center;
+            }
+            a{
+                border: thick solid black ;
+                background-color: white;
+                border-radius: 15%;
+                margin : 100px;
+                padding: 10px;
+                font-size: 40px;
+                font-family: sans-serif;
+                
+                color: black;
+                text-decoration: none;
 
+            }
+            body{
+                background-color : lightsteelblue;
+            }
+            h1{
+                font-size: 72px;
+            }
+        </style>
+    </head>
     <body>
 
-        <h1>This is a landing page</h1>
+       
+        <div class = "myDiv">
+            <h1>Server Monitoring Diagnostics Tool</h1>
+       
+            
 
-        <ul>
-
-            <li><a href="{{ url_for('main.login') }}">Login</a></li>
-            <li><a href="{{ url_for('main.register') }}">Register</a></li>
-
-        </ul>
-
+                <p> <a  href="{{ url_for('main.login') }}">Login</a> </p>
+                <br>
+                <br>
+                <p><a href="{{ url_for('main.register') }}">Register</a></p>
+           
+        </div>
     </body>
 
 
