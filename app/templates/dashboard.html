@@ -6,6 +6,8 @@
                 font-size: 72px;
                 text-align: center;
                 display: table;
+                padding-left: 24px;
+                padding-right: 24px;
                 margin: auto;
                 border: thick solid rgb(150, 180, 218);
                 background-color:aliceblue;
@@ -15,20 +17,28 @@
             margin: auto;
             color: black;
             padding: 10px;
+            padding-left: 75px;
+            padding-right: 75px;
             
             background-color:aliceblue;
             border: thick solid rgb(150, 180, 218);
             
 
-            font-size: 18px;
+            font-size: 32px;
             }
             .serverList{
                 display: table;
                 margin: auto;
-                padding: 10px;
+                padding-top: 1.5%;
+                padding-left: 5%;
+                padding-right: 5%;
+                padding-bottom: 2.5%;
+                
                 background-color: aliceblue;
                 border: thick solid rgb(150, 180, 218);
+                font-size: 32px;
             }
+
             .welcome{
             display: table;
             margin: auto;
@@ -79,6 +89,12 @@
                 text-decoration: none;
                 color: black;
             }
+            .remove{
+                text-align: right;
+            }
+            .serverName{
+                text-align: left;
+            }
         </style>
     </head>
 
@@ -91,7 +107,7 @@
 
         
         <div class = 'buttons'>
-            <div class = 'childButton'><a class="button" href="{{ url_for('main.add_monitor') }}">Add Monitor</a></div>
+            <div class = 'childButton'><a class="button" href="{{ url_for('main.add_monitor') }}">Add Server</a></div>
                 
             <div class = 'childButton'><a class ="button" href="{{ url_for('main.logout') }}">Logout</a></div>
 
@@ -102,13 +118,15 @@
         {% if monitors%}
         {% for monitor in monitors %}
         
-        <p>{{ monitor.url }}
-            <a href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a>
-        </p>
+        <div >
+                <p style="margin:0;display:inline;float:left;padding-bottom: 70px">{{ monitor.url }} </p>
+                <p style="margin:0;display:inline;float:right;padding-left: 500px;padding-bottom: 70px;"><a  href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a></p>
+            </p>
+    
         {% endfor %}
 
         {% else %}
-        <p class = 'alert_NoServers'>You currently aren't monitoring any servers! Add servers by clicking the add servers button! </p>
+        <p class = 'alert_NoServers'>You currently aren't monitoring any servers! Add servers by clicking the add server button! </p>
         {% endif %}
 
     </div>
