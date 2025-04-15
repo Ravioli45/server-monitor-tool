@@ -4,7 +4,7 @@
         <style>
             .boxDiv{
                 margin: auto;
-                margin-top: 8%;
+                margin-top: 5%;
                 padding: 20px;
                 background-color: aliceblue;
                 width: 400px;
@@ -21,15 +21,18 @@
                 font-weight: bolder;
             }
             a{
-                border: thick solid black;
+                border: thick solid rgb(127,165,215);
                 background-color: white;
-                border-radius: 15%;
+                border-radius: 10px;
                 margin : 100px;
                 padding: 10px;
                 font-size: 40px;
-                font-family: sans-serif;
+                font-family: 'Times New Roman', Times, serif;
                 color: black;
                 text-decoration: none;
+            }
+            a:hover {
+                background-color: rgb(170, 170, 170);
             }
             body{
                 background-color : lightsteelblue;
@@ -60,6 +63,7 @@
         </style>
     </head>
     <body>
+        <br><br><a  href="{{ url_for('main.index') }}">Back to Home</a>
         <div class="boxDiv">
             <h1>Register</h1>
 

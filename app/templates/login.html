@@ -47,6 +47,9 @@
             cursor: pointer;
             font-family: 'Times New Roman', Times, serif;
         }
+        #submit:hover {
+            background-color: rgb(170, 170, 170);
+        }
         a{
             border: solid rgb(133, 169, 215);
                 background-color: white;
@@ -60,10 +63,24 @@
                 text-decoration: none;
 
             }
+        .backButton {
+                border: thick solid rgb(127,165,215);
+                background-color: white;
+                border-radius: 10px;
+                margin : 100px;
+                padding: 10px;
+                font-size: 40px;
+                font-family: 'Times New Roman', Times, serif;
+                color: black;
+                text-decoration: none;
+        }
+        a:hover {
+            background-color: rgb(170, 170, 170);
+        }
     </style>
 </head>
     <body>
-        
+        <br><br><a href="{{ url_for('main.index') }}" class="backButton">Back to Home</a>
         <h1 class = 'title'>Login</h1>
         
         {% with messages = get_flashed_messages() %}
