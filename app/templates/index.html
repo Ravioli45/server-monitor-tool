@@ -9,11 +9,11 @@
             a{
                 border: thick solid black ;
                 background-color: white;
-                border-radius: 15%;
+                border-radius: 10px;
                 margin : 100px;
                 padding: 10px;
                 font-size: 40px;
-                font-family: sans-serif;
+                font-family: 'Times New Roman', Times, serif;
                 
                 color: black;
                 text-decoration: none;
@@ -24,6 +24,7 @@
             }
             h1{
                 font-size: 72px;
+                font-family: 'Times New Roman', Times, serif;
             }
         </style>
     </head>
@@ -38,7 +39,7 @@
                 <p> <a  href="{{ url_for('main.login') }}">Login</a> </p>
                 <br>
                 <br>
-                <p><a href="{{ url_for('main.register') }}">Register</a></p>
+                <p><a href="{{ url_for('main.register') }}">Sign Up</a></p>
            
         </div>
     </body>
