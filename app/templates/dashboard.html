@@ -1,28 +1,117 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            h1{
+                font-size: 72px;
+                text-align: center;
+                display: table;
+                margin: auto;
+                border: thick solid rgb(150, 180, 218);
+                background-color:aliceblue;
+            }
+            .serverListHead{
+            display: table;
+            margin: auto;
+            color: black;
+            padding: 10px;
+            
+            background-color:aliceblue;
+            border: thick solid rgb(150, 180, 218);
+            
+
+            font-size: 18px;
+            }
+            .serverList{
+                display: table;
+                margin: auto;
+                padding: 10px;
+                background-color: aliceblue;
+                border: thick solid rgb(150, 180, 218);
+            }
+            .welcome{
+            display: table;
+            margin: auto;
+            color: black;
+            padding: 20px;
+            
+            background-color:aliceblue;
+            border: thick solid rgb(150, 180, 218);
+            
+
+            font-size: 32px;
+            }
+            .alert_NoServers{
+                display: table;
+            margin: auto;
+            color: red;
+            padding: 10px;
+            
+            background-color:aliceblue;
+            
+            font-weight: bolder;
+
+            font-size: 18px;
+            }
+            body{
+                background-color: lightsteelblue;
+            }
+            .buttons{
+                display: table;
+                margin: auto;
+                padding: 20px;
+            }
+            .childButton{
+                display: inline-block;
+                padding: 20px;
+                border: thick solid rgb(116, 161, 220) ;
+                background-color: white;
+                border-radius: 10px;
+                margin : 100px;
+                
+                font-size: 40px;
+                font-family: 'Times New Roman', Times, serif;
+                
+               
+                
+            }
+            .button{
+                text-decoration: none;
+                color: black;
+            }
+        </style>
+    </head>
 
     <body>
 
-        <h1>This is the dashboard</h1>
+        <h1>Your Servers</h1>
+        <br>
 
-        <p>Hello {{ current_user.username }}</p>
+        <p class = "welcome">Hello {{ current_user.username }}</p>
 
-        <ul>
+        
+        <div class = 'buttons'>
+            <div class = 'childButton'><a class="button" href="{{ url_for('main.add_monitor') }}">Add Monitor</a></div>
+                
+            <div class = 'childButton'><a class ="button" href="{{ url_for('main.logout') }}">Logout</a></div>
 
-            <li><a href="{{ url_for('main.add_monitor') }}">Add Monitor</a></li>
-            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
-
-        </ul>
-
-        <p>Monitoring...</p>
-
+        </div>
+        
+        <p class = 'serverListHead'>Server List</p>
+        <div class = "serverList">
+        {% if monitors%}
         {% for monitor in monitors %}
+        
         <p>{{ monitor.url }}
             <a href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a>
         </p>
         {% endfor %}
 
-        
+        {% else %}
+        <p class = 'alert_NoServers'>You currently aren't monitoring any servers! Add servers by clicking the add servers button! </p>
+        {% endif %}
+
+    </div>
 
     </body>
 
