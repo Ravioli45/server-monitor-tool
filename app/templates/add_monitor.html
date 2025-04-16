@@ -1,47 +1,130 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            body{
+                background-color: lightsteelblue;
+            }
+            h1{
+                font-size: 72px;
+                text-align: center;
+                display: table;
+                padding-left: 24px;
+                padding-right: 24px;
+                margin: auto;
+                border: thick solid rgb(150, 180, 218);
+                background-color:aliceblue;
+                font-family: 'Times New Roman', Times, serif;
+            }
+            .textEntry{
+                display: table;
+                margin: auto;
+                font-size: 24px;
+                font-weight: bold;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .submit{
+                display: table;
+                margin: auto;
+            }
+            #submit{
+            background-color: aliceblue;
+            border: solid rgb(127,165,215);
+            border-radius: 5px;
+            color: black;
+            padding: 5px 22px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px;
+            margin: 4px 2px;
+            cursor: pointer;
+            font-family: 'Times New Roman', Times, serif;
+            }
+
+            .msg{
+            display: table;
+            margin: auto;
+            color: rgb(235, 36, 36);
+            padding: 10px;
+            border-radius: 20px;
+            background-color: rgb(252, 200, 200);
+            border: thick solid red;
+            font-weight: bolder;
+            }
+
+            #submit:hover {
+                background-color: rgb(170, 170, 170);
+            }   
+            #minutes_between_pings{
+                background-color: aliceblue;
+            }
+            #url{
+                background-color: aliceblue;
+            }
+            .backButton{
+                border:solid rgb(127,165,215);
+                background-color: aliceblue;
+                border-radius: 10px;
+                margin : auto;
+                display: table;
+                padding: 10px;
+                font-size: 24px;
+                font-family: 'Times New Roman', Times, serif;
+                color: black;
+                text-decoration: none;
+            }
+        </style>
+    </head>
 
     <body>
 
-        <h1>Add monitor</h1>
+        <h1>Add Servers Here!</h1>
 
-        <p>Adding monitor for {{ current_user.username }}</p>
+        <!--<p>Adding monitor for {{ current_user.username }}</p>-->
 
         {% with messages = get_flashed_messages() %}
 
         {% if messages %}
-        <ul>
+        
+            <div class = "msg">
 
             {% for message in messages %}
-            <li>{{ message }}</li>
+            <p>{{ message }}</p>
             {% endfor %}
 
-        </ul>
+        </div>
+       
         {% endif %}
         {% endwith %}
 
+        {% for error in form.url.errors %}
+                <span style="display: table;margin: auto;color: rgb(235, 36, 36);padding: 10px;background-color: rgb(252, 200, 200);border: thick solid red;font-weight: bolder;">[{{ error }}]</span>
+                {% endfor %}
+
         <form method="post">
-
+            <br>
             {{ form.hidden_tag() }}
-
-            <p>
+            <div class = "textEntry" style="background-color: aliceblue; border: thick solid rgb(129, 169, 221);">
+                <p>
                 {{ form.url.label }}<br>
                 {{ form.url(size=32) }}<br>
-                {% for error in form.url.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                </p>
+                <p>
+                    {{ form.minutes_between_pings.label }}<br>
+                    {{ form.minutes_between_pings(size=32) }}<br>
+                    {% for error in form.minutes_between_pings.errors %}
+                    <span style="display: table;margin: auto;color: rgb(235, 36, 36);padding: 10px;border-radius: 20px;background-color: rgb(252, 200, 200);border: thick solid red;font-weight: bolder;">[{{ error }}]</span>
                 {% endfor %}
-            </p>
-            <p>
-                {{ form.minutes_between_pings.label }}<br>
-                {{ form.minutes_between_pings(size=32) }}<br>
-                {% for error in form.minutes_between_pings.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-
+                </p>
+            </div>
+            <div class="submit">
             <p>{{ form.submit() }}</p>
-
+            </div>
         </form>
+
+        <p> <a class="backButton" href="{{ url_for('main.dashboard') }}">Return To Dashboard</a> </p>
 
     </body>
 

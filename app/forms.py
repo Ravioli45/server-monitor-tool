@@ -38,7 +38,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("Please use a different email.")
         
 class AddMonitorForm(FlaskForm):
-    url = StringField("Monitor URL", validators=[InputRequired(), URL("Message")])
+    url = StringField("Website URL", validators=[InputRequired(), URL("Message")])
     minutes_between_pings = IntegerField("Minutes between pings", validators=[InputRequired(), NumberRange(30, 300)])
 
     submit = SubmitField("Start Monitoring")
