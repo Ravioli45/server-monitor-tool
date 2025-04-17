@@ -27,11 +27,12 @@
             font-size: 32px;
             }
             .serverList{
-                display: table;
+                display: list-item;
+                flex-direction: row;
                 margin: auto;
                 padding-top: 1.5%;
-                padding-left: 5%;
-                padding-right: 5%;
+                padding-left: 10%;
+                padding-right: 10%;
                 padding-bottom: 2.5%;
                 
                 background-color: aliceblue;
@@ -115,23 +116,37 @@
         
         <p class = 'serverListHead'>Server List</p>
         <div class = "serverList">
+        
         {% if monitor_and_status %}
         {% for (monitor, status) in monitor_and_status %}
         
-        <div >
-                <p style="margin:0;display:inline;float:left;padding-bottom: 50px">{{ monitor.url }} </p>
-                <p style="margin:0;display:inline;float:right;padding-left: 500px;padding-bottom: 50px;"><a  href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a></p>
-                
-                <br>
-                <br>
-                <p style="font-size: small;">Last Checked {{ status.timestamp }}</p>
-            </p>
+        
+            <!--Contains the Name of Server-->
+                <div style="display: inline; float: left;">{{ monitor.url }} </div>
+
+            <!--Displays Last Time Pinged-->
+              
+             
+            
+
+            <!--Remove -->
+                <div style="display: inline; float: right;"><a  href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a></div>
+
+                <!--Displays Last Time Pinged-->
+                {% if status %}
+                <div style="display: inline; color: rgb(125, 165, 125);float:right; padding-right: 10px;">Last Checked {{ status.timestamp }}</div>
+                {% else %}
+                <div style="display: inline;color: rgb(237, 135, 135); float:right; padding-right: 10px;" >Not Pinged Yet</div>
+                {% endif %}
+                <div><p><br></p></div>
+
     
         {% endfor %}
 
         {% else %}
         <p class = 'alert_NoServers'>You currently aren't monitoring any servers! Add servers by clicking the add server button! </p>
         {% endif %}
+        
 
     </div>
 
