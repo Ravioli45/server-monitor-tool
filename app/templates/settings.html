@@ -1,47 +1,122 @@
 <!DOCTYPE html>
 <html>
 
-
+    <head>
+        <style>
+            h1{
+                font-size: 72px;
+                text-align: center;
+                display: table;
+                padding-left: 24px;
+                padding-right: 24px;
+                margin: auto;
+                border: thick solid rgb(150, 180, 218);
+                background-color:aliceblue;
+            }
+            .boxDiv{
+                text-align: center;
+                display: table;
+                padding-left: 24px;
+                padding-right: 24px;
+                margin: auto;
+                margin-top: 5%;
+                border: thick solid rgb(150, 180, 218);
+                background-color:aliceblue;
+                font-family: 'Times New Roman', Times, serif;
+            }
+            .error {
+                display: table;
+                margin: auto;
+                color: rgb(235, 36, 36);
+                padding: 10px;
+                border-radius: 20px;
+                background-color: rgb(252, 200, 200);
+                border: thick solid red;
+                font-weight: bolder;
+            }
+            a{
+                font-size: 20px;
+                color: black;
+                cursor: pointer;
+                border-radius: 15%;
+                border-color: black;
+                border-style: solid;
+                margin : 10px;
+                padding: 10px;
+                background-color: buttonface;
+                text-decoration: none;
+            }
+            a:hover {
+                background-color: rgb(170, 170, 170);
+            }
+            body{
+                background-color : lightsteelblue;
+                text-align: center;
+            }
+            h1{
+                font-size: 50px;
+            }
+            form{
+                font-size: 25px;
+            }
+            input[type=text], input[type=password] {
+                height: 30px;
+                width: 300px;
+                font-size: 25px;
+            }
+            input[type=submit] {
+                font-size: 20px;
+                color: black;
+                cursor: pointer;
+                border-radius: 15%;
+                margin : 10px;
+                padding: 10px;
+                background-color: buttonface;
+            }
+            input[type=submit]:hover {
+                background-color: rgb(170, 170, 170);
+            }
+        </style>
+    </head>
     <body>
-
+        <br><br>
         <h1>Account Settings</h1>
+        <div class="boxDiv">
+            <p style="font-size: 40px; font-weight: bold;">User: {{ current_user.username }}</p>
 
-        <p>{{ current_user.username }}</p>
-
-        {% if current_user.zip_key != None %}
-
-        <form action="{{ url_for('main.set_zip_key') }}" method="post">
-
-            {{ form.hidden_tag() }}
-
-            {{ form.reset_key() }}
-
-        </form>
-
-        {% else %}
-
-        <form action="{{ url_for('main.set_zip_key') }}" method="post">
+            {% if current_user.zip_key != None %}
             
-            {{ form.hidden_tag() }}
+            <form action="{{ url_for('main.set_zip_key') }}" method="post">
 
-            <p>
-                {{ form.zip_key.label }} <br>
-                {{ form.zip_key(size=32) }}<br>
+                {{ form.hidden_tag() }}
+                {{ form.reset_key() }}
 
-                {% for error in form.zip_key.errors %}
-                    <span style="color: red;">{{ error }}</span>
-                {% endfor %}
+            </form>
 
-            </p>
+            {% else %}
 
-            {{ form.submit_key() }}
+            <form action="{{ url_for('main.set_zip_key') }}" method="post">
+                
+                {{ form.hidden_tag() }}
 
-        </form>
+                <p style="line-height: 50px;">
+                    {{ form.zip_key.label }} <br>
+                    {{ form.zip_key(size=32) }}<br>
 
-        {% endif %}
+                    {% for error in form.zip_key.errors %}
+                        <span style="color: red;" class="error">{{ error }}</span>
+                    {% endfor %}
 
-        <p><a href="{{ url_for('main.dashboard') }}">Return to dashboard</a></p>
+                </p>
 
+                {{ form.submit_key() }}
+
+            </form>
+
+            {% endif %}
+
+            <br> <p><a href="{{ url_for('main.dashboard') }}">Return to dashboard</a></p> <br> <br>
+        </div>
     </body>
 
 </html>
