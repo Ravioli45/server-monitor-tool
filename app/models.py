@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
 
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
+    zip_key: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64), nullable=True, default=lambda: None)
 
     password_hash: so.Mapped[str] = so.mapped_column(sa.String(256))
 
