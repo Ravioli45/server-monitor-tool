@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+
+    <body>
+
+        <h1>Account Settings</h1>
+
+        <p>{{ current_user.username }}</p>
+
+        {% if current_user.zip_key != None %}
+
+        <form action="{{ url_for('main.set_zip_key') }}" method="post">
+
+            {{ form.hidden_tag() }}
+
+            {{ form.reset_key() }}
+
+        </form>
+
+        {% else %}
+
+        <form action="{{ url_for('main.set_zip_key') }}" method="post">
+            
+            {{ form.hidden_tag() }}
+
+            <p>
+                {{ form.zip_key.label }} <br>
+                {{ form.zip_key(size=32) }}<br>
+
+                {% for error in form.zip_key.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+
+            </p>
+
+            {{ form.submit_key() }}
+
+        </form>
+
+        {% endif %}
+
+        <p><a href="{{ url_for('main.dashboard') }}">Return to dashboard</a></p>
+
+    </body>
+
+</html>

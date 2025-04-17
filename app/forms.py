@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import ValidationError, EqualTo, Email, \
-    Length, InputRequired, URL, NumberRange
+    Length, InputRequired, URL, NumberRange, DataRequired
 
 from app import db
 import sqlalchemy as sa
@@ -47,3 +47,9 @@ class AddMonitorForm(FlaskForm):
         parsed = urlparse(url.data)
         if parsed.scheme != "https":
             raise ValidationError("Make sure to include HTTPS at beginning of url.")
+
+class ZipKeyForm(FlaskForm):
+    zip_key = StringField("Zip Key", validators=[DataRequired()])
+
+    submit_key = SubmitField("Set Zip Key")
+    reset_key = SubmitField("Reset Zip Key")

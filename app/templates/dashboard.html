@@ -108,19 +108,23 @@
         
         <div class = 'buttons'>
             <div class = 'childButton'><a class="button" href="{{ url_for('main.add_monitor') }}">Add Server</a></div>
-                
+            <div class = 'childButton'><a class ="button" href="{{ url_for('main.account_settings') }}">Account Settings</a></div>
             <div class = 'childButton'><a class ="button" href="{{ url_for('main.logout') }}">Logout</a></div>
 
         </div>
         
         <p class = 'serverListHead'>Server List</p>
         <div class = "serverList">
-        {% if monitors%}
-        {% for monitor in monitors %}
+        {% if monitor_and_status %}
+        {% for (monitor, status) in monitor_and_status %}
         
         <div >
-                <p style="margin:0;display:inline;float:left;padding-bottom: 70px">{{ monitor.url }} </p>
-                <p style="margin:0;display:inline;float:right;padding-left: 500px;padding-bottom: 70px;"><a  href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a></p>
+                <p style="margin:0;display:inline;float:left;padding-bottom: 50px">{{ monitor.url }} </p>
+                <p style="margin:0;display:inline;float:right;padding-left: 500px;padding-bottom: 50px;"><a  href="{{ url_for('main.remove_monitor', monitor_id=monitor.id) }}">remove</a></p>
+                
+                <br>
+                <br>
+                <p style="font-size: small;">Last Checked {{ status.timestamp }}</p>
             </p>
     
         {% endfor %}
