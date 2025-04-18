@@ -4,7 +4,7 @@ from flask import Flask, request, session, render_template, redirect, url_for, f
 from flask_login import current_user, logout_user, login_required, login_user
 from app import db
 from app.models import *
-from app.forms import LoginForm, RegistrationForm, AddMonitorForm
+from app.forms import LoginForm, RegistrationForm, AddMonitorForm, ZipKeyForm
 
 bp = Blueprint("main", __name__)
 
@@ -74,11 +74,19 @@ def register():
 @login_required
 def dashboard():
 
-    monitors = db.session.scalars(
+    monitors: list[Monitor] = db.session.scalars(
         current_user.monitors.select()
     ).all()
 
-    return render_template("dashboard.html", monitors=monitors)
+    most_recent_statuses: list[Status] = []
+    for m in monitors:
+        most_recent = db.session.scalars(
+            m.status_checks.select().order_by(sa.desc(Status.timestamp))
+        ).first()
+        most_recent_statuses.append(most_recent)
+
+    monitor_and_status = list(zip(monitors, most_recent_statuses))
+    return render_template("dashboard.html", monitor_and_status=monitor_and_status)
 
 @bp.route("/dashboard/add_monitor", methods=["GET", "POST"])
 @login_required
@@ -120,3 +128,27 @@ def remove_monitor(monitor_id):
         db.session.commit()
 
     return redirect(url_for("main.dashboard"))
+
+@bp.route("/account_settings")
+@login_required
+def account_settings():
+
+    form = ZipKeyForm()
+
+    return render_template("settings.html", form=form)
+
+@bp.route("/account_settings/set_zip_key", methods=["POST"])
+@login_required
+def set_zip_key():
+    
+    zip_key = request.form.get("zip_key")
+
+    if zip_key is None:
+        current_user.zip_key = None
+    else:
+        if not zip_key.isspace():
+            current_user.zip_key = zip_key
+
+    db.session.commit()
+    
+    return redirect(url_for("main.account_settings"))

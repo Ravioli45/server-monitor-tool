@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import ValidationError, EqualTo, Email, \
-    Length, InputRequired, URL, NumberRange
+    Length, InputRequired, URL, NumberRange, DataRequired
 
 from app import db
 import sqlalchemy as sa
@@ -38,7 +38,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("Please use a different email.")
         
 class AddMonitorForm(FlaskForm):
-    url = StringField("Monitor URL", validators=[InputRequired(), URL("Message")])
+    url = StringField("Website URL", validators=[InputRequired(), URL("Message")])
     minutes_between_pings = IntegerField("Minutes between pings", validators=[InputRequired(), NumberRange(30, 300)])
 
     submit = SubmitField("Start Monitoring")
@@ -47,3 +47,9 @@ class AddMonitorForm(FlaskForm):
         parsed = urlparse(url.data)
         if parsed.scheme != "https":
             raise ValidationError("Make sure to include HTTPS at beginning of url.")
+
+class ZipKeyForm(FlaskForm):
+    zip_key = StringField("Zip Key", validators=[DataRequired()])
+
+    submit_key = SubmitField("Set Zip Key")
+    reset_key = SubmitField("Reset Zip Key")
