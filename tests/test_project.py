@@ -1,8 +1,6 @@
 from app.models import User, Monitor
 from app import db
 import sqlalchemy as sa
-from flask import Flask, request, render_template
-from bs4 import BeautifulSoup
 
 def test_home(client):
     response = client.get("/")
@@ -11,11 +9,7 @@ def test_home(client):
 def test_registration(client, app):
     app.config['WTF_CSRF_ENABLED'] = False 
 
-    # response = client.get('/register')
-    # soup = BeautifulSoup(response.data, 'html.parser')
-    # csrf_token = soup.find('input', {'name': csrf_token})['value']
     data = {
-    #   "csrf_token": csrf_token,
         "username": "test",
         "email": "test@test.com",
         "password": "testpassword",
