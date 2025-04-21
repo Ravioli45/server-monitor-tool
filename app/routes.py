@@ -8,9 +8,21 @@ from app.forms import LoginForm, RegistrationForm, AddMonitorForm, ZipKeyForm
 
 bp = Blueprint("main", __name__)
 
+"""
+defines routes used for flask app
+
+this is defined as a blueprint to allow this project
+to use the flask factory pattern project structure
+
+webpages are made as templates using the jinja templating engine.
+the templates are filled out before being sent to the user as pure html
+"""
+
 @bp.after_request
 def after_request(response):
     
+    # the website is not cached to prevent accessing pages that need authentication
+    # after logging out due to the pages being cached
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '-1'
@@ -23,6 +35,9 @@ def index():
 
 @bp.route("/login", methods=['GET', 'POST'])
 def login():
+
+    # setting session to permanent allows a timeout to be set
+    # in this case the timeout is set to an hour in the config file
     session.permanent = True
 
     if current_user.is_authenticated:
@@ -45,6 +60,8 @@ def login():
 
 @bp.route("/logout")
 def logout():
+    # session cookies are cleared to prevent authentication session cookie
+    # from being stored for longer tha neccessary
     session.clear()
     logout_user()
     return redirect(url_for("main.index"))
@@ -52,6 +69,8 @@ def logout():
 @bp.route("/register", methods=["GET", "POST"])
 def register():
 
+    # user shouldn't be able to register if they are
+    # already logged in
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
     
@@ -74,10 +93,12 @@ def register():
 @login_required
 def dashboard():
 
+    # get all monitors belonging to current user
     monitors: list[Monitor] = db.session.scalars(
         current_user.monitors.select()
     ).all()
 
+    # get most recent status check for monitors that belong to the current user
     most_recent_statuses: list[Status] = []
     for m in monitors:
         most_recent = db.session.scalars(
@@ -85,6 +106,7 @@ def dashboard():
         ).first()
         most_recent_statuses.append(most_recent)
 
+    # pass monitor and status information to template
     monitor_and_status = list(zip(monitors, most_recent_statuses))
     return render_template("dashboard.html", monitor_and_status=monitor_and_status)
 
@@ -100,6 +122,7 @@ def add_monitor():
             sa.select(Monitor).where(sa.and_(Monitor.user_id == current_user.id, Monitor.url == form.url.data))
         )
 
+        # don't add monitors that already exist
         if existing_monitor is not None:
             flash("Monitor already exists")
             return redirect(url_for("main.add_monitor"))
@@ -123,6 +146,7 @@ def remove_monitor(monitor_id):
     to_delete = db.session.get(Monitor, monitor_id)
 
     # if monitor belongs to user
+    # we don't want to be able to delete monitors belonging to other uses
     if (to_delete is not None) and to_delete.user_id == current_user.id:
         db.session.delete(to_delete)
         db.session.commit()

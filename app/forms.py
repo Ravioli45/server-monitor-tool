@@ -9,6 +9,12 @@ from app import db
 import sqlalchemy as sa
 from app.models import User
 
+"""
+defines forms used within the webpages
+
+also allows validators to be defined to ensure form input is correct.
+"""
+
 class LoginForm(FlaskForm):
 
     username = StringField("Username", validators=[InputRequired()])
@@ -43,6 +49,7 @@ class AddMonitorForm(FlaskForm):
 
     submit = SubmitField("Start Monitoring")
 
+    # validate_<field_name> is automatically called by wtforms
     def validate_url(self, url):
         parsed = urlparse(url.data)
         if parsed.scheme != "https":

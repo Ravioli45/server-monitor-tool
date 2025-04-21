@@ -25,7 +25,6 @@ scheduler.init_app(app)
 AUTH_STR = base64.b64encode(f"api:{os.environ.get('API_KEY')}".encode("ascii")).decode("ascii")
 MAILBOX_URL = os.environ.get("MAILBOX_URL")
 def send_alert_email(monitor: Monitor, message: str):
-    #print(f"Message: {message}")
 
     # constructing body and headers of post request for mailgun api
     data = None
@@ -73,7 +72,6 @@ def send_alert_email(monitor: Monitor, message: str):
         payload += (b"--" + boundary + b'--\r\n')
         zip_buffer.close()
 
-        #print(payload)
         headers = {
             "Authorization":f"Basic {AUTH_STR}",
             "Content-Type": f"multipart/form-data; boundary={boundary.decode()}",
@@ -82,22 +80,22 @@ def send_alert_email(monitor: Monitor, message: str):
     
     
     try:
+        # send request to mailgun api
         conn = http.client.HTTPSConnection("api.mailgun.net")
         conn.request("POST", f"/v3/{MAILBOX_URL}/messages", body=payload, headers=headers)
 
         response = conn.getresponse()
-        #print(response.reason)
-        #print(response.read())
         response.close()
         conn.close()
     except:
         pass
 
+# runs this function every five minutes
 @scheduler.task('cron', id="check-monitors", minute="*/5")
 def check_monitors():
-    print("checking monitors")
+    
+    # the current app context is needed to access the database
     with scheduler.app.app_context():
-        #print(db.session.scalars(sa.select(User)).all())
         monitors = db.session.scalars(sa.select(Monitor).order_by(sa.asc(Monitor.time_next_ping))).all()
 
         for i in range(len(monitors)):
@@ -114,20 +112,22 @@ def check_monitors():
                         path = parsed_url.path
                         port = parsed_url.port
 
-                        #context = ssl.create_default_context()
+                        # use an unverified context so we can still
+                        # connect if ssl is expired
                         context = ssl._create_unverified_context()
 
                         conn = http.client.HTTPSConnection(host, port=port or 443, context=context, timeout=10)
                         conn.request("GET", f"/{path}")
                         response = conn.getresponse()
 
+                        # I couldn't find any other way to get the certificate from an 
+                        # unverified ssl context
                         cert = x509.load_der_x509_certificate(conn.sock.getpeercert(True))
                         http_status = f"{response.status} {response.reason}"
 
                         response.close()
                         conn.close()
 
-                        #expires_on = datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z").astimezone(timezone.utc)
                         expires_on = cert.not_valid_after_utc
                         ssl_expired = expires_on < datetime.now(timezone.utc)
 
@@ -138,7 +138,6 @@ def check_monitors():
                         http_status = "STATUS CHECK FAILED"
                         ssl_expired = None
                     finally:
-                        #print("adding status")
                         new_status = Status(response=http_status, ssl_expired=ssl_expired, monitor=current)
                         db.session.add(new_status)
                         current.time_next_ping = datetime.now(timezone.utc) + timedelta(seconds=current.seconds_to_next_ping-1)
@@ -148,14 +147,18 @@ def check_monitors():
                 # ...this *should* hit when parent is removed from db mid job (ie user deletes account while this is happening)
                 db.session.rollback()
 
+# this function is called every fifteen minutess
 @scheduler.task('cron', id="send-status", minute="1-59/15")
 def send_status_emails():
-    print("Sending emails...")
+    
+    # app context needed to access database
     with scheduler.app.app_context():
+
+        # get all statuses that haven't had alerts sent out
         statuses = db.session.scalars(
             sa.select(Status).where(Status.alerted == False).order_by(sa.asc(Status.timestamp))
         ).all()
-        #print(statuses)
+        
         for i in range(len(statuses)):
             try:
                 current = statuses[i]
@@ -171,7 +174,6 @@ def send_status_emails():
                     message = f"The following issues were detected at {current.timestamp}\r\n" + message
                     message += f"Alert sent at {datetime.now(timezone.utc)}"
                     send_alert_email(current.monitor, message)
-                    #print(message)
 
                 current.alerted = True
                 db.session.commit()
@@ -179,10 +181,10 @@ def send_status_emails():
             except:
                 db.session.rollback()
 
-
+# start background tasks
 scheduler.start()
 
-
+# adds some variables to `flask shell`
 @app.shell_context_processor
 def make_shell_context():
     return {'sa': sa, 'so': so, 'db': db}
